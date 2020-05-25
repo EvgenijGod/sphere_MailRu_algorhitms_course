@@ -1,0 +1,96 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+enum STATES{BEGIN, C11, C1, C12, C31, C3, C4, C2} state = BEGIN;
+int main()
+{
+    int a1 = 0, a2 = 0, a3 = 0, a4 = 0;// 1=(* 2={ 3=// 4='
+    char c;
+    //FILE *fin = fopen("inp.txt", "r");
+    while(scanf( "%c", &c) != EOF) {
+        switch (state) {
+            case BEGIN : {
+                switch (c) {
+                    case '(' : {
+                        state = C11;
+                        break;
+                    }
+                    case '/' : {
+                        state = C31;
+                        break;
+                    }
+                    case '{' : {
+                        state = C2;
+                        break;
+                    }
+                    case '\'' : {
+                        state = C4;
+                        break;
+                    }
+                }
+                break;
+            }
+            case C11 : {
+                if (c == '*')
+                    state = C1; else
+                if (c == '/')
+                    state = C31; else
+                if (c == '{')
+                    state = C2; else
+                if (c == '\'')
+                    state = C4; else state = BEGIN;
+                break;
+            }
+            case C1 : {
+                if (c == '*')
+                    state = C12;
+                break;
+            }
+            case C12 : {
+                if (c == ')') {
+                    state = BEGIN;
+                    a1++;
+                } else state = C1;
+                break;
+            }
+            case C31 : {
+                if (c == '(')
+                    state = C11; else
+                if (c == '/')
+                    state = C3; else
+                if (c == '{')
+                    state = C2; else
+                if (c == '\'')
+                    state = C4; else state = BEGIN;
+                break;
+            }
+            case C3 : {
+                if (c == '\n') {
+                    state = BEGIN;
+                    a3++;
+                }
+                break;
+            }
+            case C4 : {
+                if (c == '\'') {
+                    state = BEGIN;
+                    a4++;
+                }
+                if (c == '\n')
+                    state = BEGIN;
+                break;
+            }
+            case C2 : {
+                if (c == '}') {
+                    state = BEGIN;
+                    a2++;
+                }
+                break;
+            }
+        }
+    }
+    cout << a1 << " " << a2 << " " << a3 << " " << a4;
+    return 0;
+}

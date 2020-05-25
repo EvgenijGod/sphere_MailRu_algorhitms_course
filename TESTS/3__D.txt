@@ -1,0 +1,82 @@
+#include <iostream>
+#include <algorithm>
+#include <set>
+#include <vector>
+#include <limits.h>
+#include <deque>
+using namespace std;
+
+vector<vector<pair<int, int>>> A;
+int n, m, c, start, finish;
+bool endd = false;
+vector<int> way_used;
+vector<bool> used;
+vector<bool> ans;
+void dfs(int v, int non) {
+    if (endd == true) {
+        return;
+    }
+    if (v == finish) {
+        for (int i = 1; i <= c; i++) {
+            if (way_used[i] == 0) {
+                ans[i] = true;
+            }
+        }
+        endd = true;
+        return;
+    }
+    used[v] = true;
+    int sz = A[v].size();
+    for (int i = 0; i < sz; i++) {
+        if (A[v][i].second != non && used[A[v][i].first] == false) {
+            way_used[A[v][i].second] = 1;
+            dfs(A[v][i].first, non);
+            if (endd == true) {
+                return;
+            }
+        }
+    }
+    return;
+}
+int main() {
+    scanf("%d %d %d", &n, &m, &c);
+    A.resize(n);
+    way_used.resize(c + 1, 0);
+    used.resize(n, false);
+    ans.resize(c + 1, false);
+    for (int i = 0; i < m; i++) {
+        int x, y, z;
+        scanf("%d %d %d", &x, &y, &z);
+        x--;
+        y--;
+        A[x].push_back({y, z});
+        A[y].push_back({x, z});
+    }
+    scanf("%d %d", &start, &finish);
+    start--;
+    finish--;
+    for (int i = 1; i <= c; i++) {
+        dfs(start, i);
+        endd = false;
+        for (int i = 0; i < n; i++) {
+            used[i] = false;
+        }
+        for (int i = 1; i <= c; i++) {
+            way_used[i] = 0;
+        }
+    }
+
+    int cnt = 0;
+    for (int i = 1; i <= c; i++) {
+        if (ans[i] == true) {
+            cnt++;
+        }
+    }
+    cout << cnt << endl;
+    for (int i = 1; i <= c; i++) {
+        if (ans[i] == true) {
+            cout << i << " ";
+        }
+    }
+    return 0;
+}

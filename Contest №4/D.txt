@@ -1,0 +1,52 @@
+#include <iostream>
+#include <algorithm>
+#include <queue>
+#include <vector>
+#include <set>
+using namespace std;
+int ans = 0;
+
+int main() {
+    int n, m;
+    scanf("%d%d", &n, &m);
+    vector<int> my(n * m);
+    vector<int> tmp(m);
+    for (int i = 0; i < m; i++)
+        scanf("%d", &my[i]);
+    sort(my.begin(), my.begin() + m);
+    for (int q = 1; q < n; q++) {
+        /*for (int i = 0; i < n* m; i++)
+            cout << my[i] << " ";
+        cout << endl;*/
+        int cnt = 0;
+        for (int j = 0; j < m; j++) {
+            scanf("%d", &tmp[j]);
+        }
+        sort(tmp.begin(), tmp.end());
+        for (int i = 0; i < q; i++) {
+            int ii = 0, jj = 0;
+            while (ii < m && jj < m) {
+                if (my[ii + i * m] == tmp[jj]) {
+                    ii++;
+                    jj++;
+                    cnt++;
+                    continue;
+                }
+                if (my[ii + i * m] < tmp[jj]) {
+                    ii++;
+                    continue;
+                }
+                jj++;
+            }
+            ans = max(ans, cnt);
+            cnt = 0;
+        }
+        int r = q * m;
+        for (int j = 0; j < m; j++) {
+            my[r + j] = tmp[j];
+        }
+
+    }
+    printf("%d", ans);
+    return 0;
+}

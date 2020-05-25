@@ -1,0 +1,44 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+using namespace std;
+
+class edge {
+public: int time = 0;
+public: short state = 0;
+};
+
+bool cmp(edge a, edge b) {
+    int aa = a.time, bb = b.time, a1 = a.state;
+    if (aa < bb) return true;
+    if (aa == bb && a.state > b.state)
+        return true;
+    return false;
+}
+
+vector <edge> A;
+int main() {
+    long long n, sum = 0, res = 0;
+    short c = 1;
+    cin >> n;
+    A.resize(2 * n, {0, 0});
+    n = 2 * n;
+    for (int i = 0; i < n; i++) {
+        string st;
+        cin >> st;
+        int h = 0, m = 0, s = 0, tmp = 0;
+        h = (st[0] - '0') * 10 + st[1] - '0';
+        m = (st[3] - '0') * 10 + st[4] - '0';
+        s = (st[6] - '0') * 10 + st[7] - '0';
+        tmp = 10000 * h + 100 * m + s;
+        A[i] = {tmp, c};
+        c *= -1;
+    }
+    sort(A.begin(), A.end(), cmp);
+    for (int i = 0; i < n; i++) {
+        sum += A[i].state;
+        res = max(res, sum);
+    }
+    cout << res;
+    return 0;
+}

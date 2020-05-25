@@ -1,0 +1,101 @@
+#include <iostream>
+#include <algorithm>
+#include <hashtable.h>
+#include <string.h>
+using namespace std;
+
+template<typename T>
+class CRCCoder {
+public:
+    CRCCoder() {
+        init();
+    }
+    static T calc(const char *p) {
+        T ctmp = T(-1);
+        while (*p) {
+            ctmp ^= (T)(p[0]);
+            ctmp = (ctmp >> 8) ^ _table[ctmp & 0xFF];
+            p++;
+        }
+        return ctmp ^ T(-1);
+    }
+
+    void init() {
+        initTable();
+        _value = T(-1);
+    }
+
+    void update(unsigned char p) {
+        _value ^= (T)(p);
+        _value = (_value >> 8) ^ _table[_value & 0xFF];
+    }
+
+    T final() {
+        return _value ^ T(-1);
+    }
+
+private:
+    T _value;
+    static T _table[256];
+    static T POLY;
+    static void initTable() {
+        if (_table[0] == 0) {
+            T *p = _table;
+            int             i, j;
+            for (j = 0; j < 256; j++) {
+                T x = j;
+                for (i = 0; i < 8; i++) {
+                    if ((x & 1) != 0) {
+                        x = (x >> 1) ^ POLY;
+                    } else {
+                        x = (x >> 1);
+                    }
+                }
+                *p++ = x;
+            }
+        }
+    }
+};
+
+
+class hashtable {
+private:
+    vector<const char *> v;
+    CRCCoder <unsigned> coder;
+    const char *DEL = (const char *) -1;
+public:
+    hashtable (int N) {
+        v.resize(2 * N);
+        coder.init();
+    }
+    void insert (const char *key) {
+        for (unsigned h = coder.calc(key) % v.size();; h = (h + 1) % v.size()) {
+            if (v[h] == nullptr || v[h] == DEL) {
+                v[h] = strdup(key);
+                return;
+            }
+        }
+    }
+    bool find (const char *key) {
+        for (unsigned h = coder.calc(key) % v.size();; h = (h + 1) % v.size()) {
+            if (v[h] == nullptr) return false;
+            if (v[h] == DEL) continue;
+            if (strcmp(v[h], key) == 0) return true;
+        }
+    }
+    void erase (const char* key) {
+        for (unsigned h = coder.calc(key) % v.size();; h = (h + 1) % v.size()) {
+            if (v[h] == nullptr) return;
+            if (v[h] == DEL) continue;
+            if (strcmp(v[h], key) == 0) {
+                free((char*)v[h]);
+                v[h] = DEL;
+                return;
+            }
+        }
+    }
+};
+int main() {
+
+    return 0;
+}

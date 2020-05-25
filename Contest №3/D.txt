@@ -1,0 +1,80 @@
+#include <math.h>
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <time.h>
+// 60000000 7 13 100
+// 60000000 1 1000000007 1000000009
+using namespace std;
+
+int a[60000000];
+int b[60000000];
+int mas1[256] = {};
+int mas2[256] = {};
+int mas3[256] = {};
+int mas4[256] = {};
+
+int masf[256] = {};
+unsigned int N, K, M, L;
+unsigned tmp;
+int main() {
+    scanf("%u %u %u %u", &N, &K, &M, &L);
+    //clock_t begin = clock();
+    a[0] = K;
+    mas1[a[0] & 255]++;
+    mas2[(a[0] >> 8) & 255]++;
+    mas3[(a[0] >> 16) & 255]++;
+    mas4[a[0] >> 24]++;
+    for (int i = 1; i < N; ++i) {
+        a[i] = (unsigned int)((a[i-1]*(unsigned long long)M)&0xFFFFFFFFU)%L;
+        mas1[a[i] & 255]++;
+        mas2[(a[i] >> 8) & 255]++;
+        mas3[(a[i] >> 16) & 255]++;
+        mas4[a[i] >> 24]++;
+    }
+    ////////////////////fisrt
+    masf[0] = 0;
+    for (int i = 1; i < 256; ++i) {
+        masf[i] = mas1[i - 1] + masf[i - 1];
+    }
+    for (int i = 0; i < N; ++i) {
+        b[masf[a[i] & 255]++] = a[i];
+    }
+    /*for (int i = 0; i < N; i++)
+        cout << b[i] << " ";
+    cout << endl;*/
+    ////////////////second
+    masf[0] = 0;
+    for (int i = 1; i < 256; ++i) {
+        masf[i] = mas2[i - 1] + masf[i - 1];
+    }
+    for (int i = 0; i < N; ++i) {
+        a[masf[(b[i] >> 8) & 255]++] = b[i];
+    }
+    ///////////third
+    masf[0] = 0;
+    for (int i = 1; i < 256; ++i) {
+        masf[i] = mas3[i - 1] + masf[i - 1];
+    }
+    for (int i = 0; i < N; ++i) {
+        b[masf[(a[i] >> 16) & 255]++] = a[i];
+    }
+    ///////////fourth
+    masf[0] = 0;
+    for (int i = 1; i < 256; ++i) {
+        masf[i] = mas4[i - 1] + masf[i - 1];
+    }
+    for (int i = 0; i < N; i++) {
+        a[masf[b[i] >> 24]++] = b[i];
+    }
+    unsigned long long res = 0;
+    for (int i = 0; i < N; i+=2) {
+        res = res + a[i];
+    }
+    res %= L;
+    printf("%llu", res);
+    //clock_t end = clock();
+    //printf("\ntime = %.4f", (double)(end - begin) / CLOCKS_PER_SEC);
+    return 0;
+}
+

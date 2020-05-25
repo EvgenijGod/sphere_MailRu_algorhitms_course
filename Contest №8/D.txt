@@ -1,0 +1,76 @@
+#include <iostream>
+#include <algorithm>
+#include <map>
+#include <vector>
+#include <limits.h>
+#include <deque>
+using namespace std;
+
+struct edge {
+    long long e, dist;
+    edge(long long vv, long long distt) {
+        e = vv;
+        dist = distt;
+    }
+};
+vector<long long> d;
+vector<vector<edge>> A;
+vector<bool> used;
+vector<long long> koster;
+multimap<long long, long long> Q;
+void dijkstra(long long s) {
+    d[s] = 0;
+    Q.insert({d[s], s});
+    while (Q.empty() == false) {
+        long long v = (*Q.begin()).second;
+        Q.erase(Q.begin());
+
+        used[v] = true;
+
+        long long sz = A[v].size();
+        for (long long i = 0; i < sz; i++) {
+            if (!used[A[v][i].e] && d[A[v][i].e] > d[v] + A[v][i].dist) {
+                d[A[v][i].e] = d[v] + A[v][i].dist;
+                Q.insert({d[A[v][i].e], A[v][i].e});
+            }
+        }
+    }
+}
+int main() {
+    long long n, m, k, start, finish;
+    cin >> n >> m >> k;
+    d.resize(n, INT_MAX);
+    used.resize(n, false);
+    A.resize(n);
+    koster.resize(k);
+    for (long long i = 0; i < k; i++) {
+        cin >> koster[i];
+        koster[i]--;
+    }
+    for (long long i = 0; i < m; i++) {
+        long long a, b, c;
+        cin >> a >> b >> c;
+        a--;
+        b--;
+        A[a].push_back({b, c});
+        A[b].push_back({a, c});
+    }
+    cin >> start >> finish;
+    start--;
+    finish--;
+    long long fire = INT_MAX;
+    for (long long i = 0; i < k; i++) {
+        dijkstra(koster[i]);
+        fire = min(fire, d[finish]);
+        for (long long j = 0; j < n; j++) {
+            used[j] = false;
+            d[j] = INT_MAX;
+        }
+    }
+    dijkstra(start);
+    if (d[finish] < fire && d[finish] != INT_MAX)
+        cout << d[finish];
+    else
+        cout << "-1";
+    return 0;
+}

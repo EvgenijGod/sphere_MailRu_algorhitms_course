@@ -1,0 +1,30 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+using namespace std;
+
+int main() {
+    vector <int> A;
+    int a, b, cnt = 0, iter = 0;
+    cin >> a >> b;
+    A.resize(a);
+    for (int i = 0; i < a; i++) {
+        cin >> A[i];
+    }
+    int tmp;
+    for (int i = 0; i < b; i++) {
+        cin >> tmp;
+        while (iter < a && A[iter] < tmp)
+            iter++;
+        if (iter == a) {
+            cout << cnt;
+            return 0;
+        }
+        if (A[iter] == tmp) {
+            cnt++;
+            iter++;
+        }
+    }
+    cout << cnt;
+    return 0;
+}

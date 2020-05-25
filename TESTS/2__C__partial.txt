@@ -1,0 +1,67 @@
+#include <iostream>
+#include <algorithm>
+#include <set>
+#include <vector>
+using namespace std;
+
+multiset<int> A;
+
+int main() {
+    int n, m;
+    scanf("%d%d", &n, &m);
+    for (int i = 0; i < n; i++) {
+        int tmp;
+        scanf("%d", &tmp);
+        A.insert(tmp);
+    }
+    auto e = A.end(), b = A.begin();
+    e--;
+    int max = *e;
+    int min = *b;
+    b++;
+    e--;
+    int max_sum = max + *e;
+    int min_sum = min + *b;
+    for (int i = 0; i < m; i++) {
+        int tmp;
+        scanf("%d", &tmp);
+        if (tmp > max_sum || tmp < min_sum) {
+            printf("Not found\n");
+            continue;
+        }
+        auto beg = A.begin(), end = A.end();
+        int y = 0;
+        while (beg != end) {
+            if (*beg > tmp / 2)
+                break;
+            int c = tmp - (*beg), beg_val = *beg;
+            if (c > max) {
+                beg++;
+                continue;
+            }
+            if (c < min)
+                break;
+            if (c == beg_val) {
+                beg++;
+                if (*beg == beg_val) {
+                    printf("%d %d\n", beg_val, c);
+                    y = 1;
+                    break;
+                }
+                beg--;
+            } else {
+                auto res = A.find(c);
+                if (res != end) {
+                    printf("%d %d\n", beg_val, c);
+                    y = 1;
+                    break;
+                }
+            }
+            beg++;
+        }
+        if (y == 0) {
+            printf("Not found\n");
+        }
+    }
+    return 0;
+}

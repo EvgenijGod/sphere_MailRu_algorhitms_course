@@ -1,0 +1,31 @@
+#include <iostream>
+#include <algorithm>
+#include <set>
+#include <vector>
+using namespace std;
+
+int main() {
+    long long p1, p2, p3, n;
+    cin >> p1 >> p2 >> p3 >> n;
+    set<long long> A;
+    set<long long> P;
+    A.insert(1);
+    P.insert(1);
+    for (int i = 0; i < n; i++) {
+        auto iter = P.begin();
+        long long tmp = *iter;
+        P.erase(iter);
+        A.insert(tmp * p1);
+        A.insert(tmp * p2);
+        A.insert(tmp * p3);
+        P.insert(tmp * p1);
+        P.insert(tmp * p2);
+        P.insert(tmp * p3);
+    }
+    auto iter = A.begin();
+    for (int i = 1; i < n; i++) {
+        iter++;
+    }
+    cout << *iter;
+    return 0;
+}

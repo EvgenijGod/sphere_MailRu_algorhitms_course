@@ -1,0 +1,25 @@
+#include <iostream>
+#include <algorithm>
+#include <fstream>
+#include <math.h>
+using namespace std;
+
+int main() {
+    int n, s = 0, res = 99999;
+    cin >> n;
+    int *a = new int[n];
+    for (int i = 0; i < n; i++){
+        cin >> a[i];
+        s += a[i];
+    }
+    for (unsigned q = 0; q < (1u << n); q++) {
+        int tmp = 0;
+        for (int i = 0; i < n; i++) {
+            tmp += a[i] * ((q >> i) & 1u);
+        }
+        res = min(res, abs(s - 2 * tmp));
+    }
+    cout << res;
+    delete []a;
+    return 0;
+}

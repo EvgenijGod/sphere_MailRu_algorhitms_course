@@ -1,0 +1,40 @@
+#include <iostream>
+#include <algorithm>
+#include <math.h>
+#include <vector>
+#include <set>
+using namespace std;
+
+int n;
+set<string> A;
+
+string make_hash() {
+    string res = "";
+    int arr[26] = {};
+    char str[10002];
+    scanf("%s", str);
+    int i = 0;
+    while (str[i] != '\0') {
+        arr[str[i] - 'A']++;
+        i++;
+    }
+    for (int i = 0; i < 26; i++) {
+        int tmp = arr[i];
+        while (tmp) {
+            int x = tmp % 10;
+            x = x + '0';
+            res.push_back(x);
+            tmp /= 10;
+        }
+        res.push_back('0');
+    }
+    return res;
+}
+int main() {
+    scanf("%d\n", &n);
+    for (int i = 0; i < n; i++) {
+        A.insert(make_hash());
+    }
+    printf("%d", A.size());
+    return 0;
+}

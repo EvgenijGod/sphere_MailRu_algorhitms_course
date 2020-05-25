@@ -1,0 +1,53 @@
+#include <iostream>
+#include <algorithm>
+#include <map>
+using namespace std;
+
+string s1, s2;
+
+map<string, string> A;
+
+int main() {
+    int n;
+    cin >> n;
+    for (int i = 0; i < n; i++) {
+        string cmd, name, phone;
+        cin >> cmd;
+        if (cmd == "ADD") {
+            cin >> name >> phone;
+            if (A.find(name) != A.end()) {
+                cout << "ERROR" << endl;
+            } else {
+                auto tmp = make_pair(name, phone);
+                A.insert(tmp);
+            }
+        }
+        if (cmd == "DELETE") {
+            cin >> name;
+            if (A.find(name) == A.end()) {
+                cout << "ERROR" << endl;
+            } else {
+                A.erase(name);
+            }
+        }
+        if (cmd == "EDITPHONE") {
+            cin >> name >> phone;
+            auto iter = A.find(name);
+            if (iter == A.end()) {
+                cout << "ERROR" << endl;
+            } else {
+                (*iter).second = phone;
+            }
+        }
+        if (cmd == "PRINT") {
+            cin >> name;
+            auto iter = A.find(name);
+            if (iter == A.end()) {
+                cout << "ERROR" << endl;
+            } else {
+                cout << (*iter).first << " " << (*iter).second << endl;
+            }
+        }
+    }
+    return 0;
+}

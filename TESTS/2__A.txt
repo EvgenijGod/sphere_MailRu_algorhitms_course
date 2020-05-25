@@ -1,0 +1,24 @@
+#include <iostream>
+#include <algorithm>
+#include <map>
+#include <vector>
+using namespace std;
+
+long long l, m, n;
+long long get(long long left, long long right) {
+    if (right - left < 2)
+        return right;
+    long long tmp = (left + right) / 2;
+    long long sum = (tmp / l) * (tmp / m);
+    if (sum > n)
+        return get (left, tmp);
+    else
+        return get (tmp, right);
+}
+
+int main() {
+    cin >> l >> m >> n;
+    long long left = 1, right = max(l, m) * n;
+    cout << get(left, right);
+    return 0;
+}

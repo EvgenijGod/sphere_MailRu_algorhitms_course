@@ -1,0 +1,104 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <iostream>
+#include <algorithm>
+#include <queue>
+#include <vector>
+#include <math.h>
+using namespace std;
+
+struct bhnode {
+	int priority;
+	bhnode() {
+		priority = 0;
+	}
+};
+/* 8 3 1 0 1 1 1000 1 1 1000
+ 1 0 7
+ 1 0 2
+ 1 3 5
+ */
+struct binary_heap {
+	bhnode *body;
+	int bodysize, insert_size, q = 0;
+	binary_heap(int maxsize) {
+		body = new bhnode[maxsize + 1];
+		bodysize = maxsize;
+		insert_size = maxsize / 2;
+		//numnodes = 0;
+	}
+	~binary_heap() {
+		delete body;
+	}
+	void insert(bhnode node) {
+		body[insert_size + q] = node;
+		q++;
+	}
+	void make_tree() {
+		int index = insert_size;
+		while (bodysize > 2) {
+			for (int i = index; i < bodysize; i += 2) {
+				body[i / 2].priority = body[i].priority ^ body[i ^ 1].priority;
+			}
+			bodysize /= 2;
+			index /= 2;
+		}
+	}
+	int get_xor(int left, int right) {
+		int res = 0;
+		if (right % 2 == 0)
+			res ^= body[right--].priority;
+		if (left % 2 == 1)
+			res ^= body[left++].priority;
+		if (right > left)
+			res ^= get_xor(left / 2, right / 2);
+		return res;
+	}
+	void changeVal(int index, int val) {
+		val ^= body[index].priority;
+		while (index > 1)
+		{
+			body[index].priority ^= val;
+			index /= 2;
+		}
+	}
+};
+int main() {
+	int n, m;
+	cin >> n >> m;
+	int heap_size = 1;
+	while (heap_size < n * 2 - 1)
+		heap_size *= 2;
+	binary_heap *my = new binary_heap(heap_size);
+	for (int i = 0; i < n; i++) {
+		int tmp;
+		scanf("%u", &tmp);
+		bhnode tmp1;
+		tmp1.priority = tmp;
+		my->insert(tmp1);
+	}
+	my->make_tree();
+	int insert_size = my->insert_size;
+	for (int q = 0; q < m; q++) {
+		int a, b, c;
+		//cin >> a >> b >> c;
+		scanf("%d%d%d", &a, &b, &c);
+		switch (a) {
+		case 1: {
+			//cout << my->get_xor(b + insert_size, c + insert_size) << endl;
+			printf("%d\n", my->get_xor(b + insert_size, c + insert_size));
+
+			break;
+		}
+		case 2: {
+			my->changeVal(b + insert_size, c);
+			/*cout << endl;
+			for (int i = 1; i < heap_size; i++) {
+				cout << my->body[i].priority << "<-[" << i << "] ";
+			}
+			cout << endl;*/
+			break;
+		}
+		}
+	}
+	return 0;
+}

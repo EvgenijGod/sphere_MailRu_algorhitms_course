@@ -1,0 +1,98 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <set>
+using namespace std;
+
+char A[150000000] = {};
+
+int main() {
+
+    int a, b, c;
+    cin >> a >> b;
+    if (a % b == 0) {
+        cout << a / b;
+        return 0;
+    }
+    if (a < b) {
+        cout << "0.";
+    } else {
+        cout << a / b << ".";
+        a %= b;
+    }
+    c = a;
+    int period = -1;
+    while (true) {
+        if (a < b) {
+            if (A[a] == 0) {
+                A[a] = 1;
+            } else {
+                period = a;
+                break;
+            }
+        } else {
+            if (a % b == 0)
+                break;
+            else {
+                a %= b;
+                if (A[a] == 0) {
+                    A[a] = 1;
+                } else {
+                    period = a;
+                    break;
+                }
+            }
+        }
+        a *= 10;
+    }
+    a = c;
+    if (period == -1) {
+        a *= 10;
+        while (true) {
+            if (a < b) {
+                cout << "0";
+                a *= 10;
+            } else {
+                cout << a / b;
+                a %= b;
+                if (a == 0) {
+                    return 0;
+                }
+                a *= 10;
+            }
+        }
+    } else {
+        A[period] = 10;
+        bool w = false;
+        while (true) {
+            if (a * 10 < b) {
+                if (A[a] == 1) {
+                    cout << "0";
+                } else {
+                    if (w == true) {
+                        cout << ")";
+                        return 0;
+                    } else {
+                        w = true;
+                        cout << "(" << "0";
+                    }
+                }
+                a *= 10;
+            } else {
+                if (A[a % b] == 1) {
+                    cout << a * 10 / b;
+                } else {
+                    if (w == true) {
+                        cout << ")";
+                        return 0;
+                    } else {
+                        w = true;
+                        cout << "(" << a * 10 / b;
+                    }
+                }
+                a = (a * 10) % b;
+            }
+        }
+    }
+    return 0;
+}

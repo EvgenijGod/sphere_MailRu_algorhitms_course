@@ -1,0 +1,30 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+int main()
+{
+    int l, n;
+    cin >> l >> n;
+    vector<int> A;
+    A.resize(n);
+    for (int i = 0; i < n; i++) {
+        cin >> A[i];
+    }
+    sort(A.begin(), A.end());
+    int cnt = 0;
+    for (int i = 0; i < n; i++)
+    {
+        int e = 1;
+        while (i + e < n && abs(A[i + e] - A[i]) <= 2 * l) {
+            e++;
+        }
+        if (e != 1) {
+            cnt += e - 1;
+            i += e - 1;
+        }
+    }
+    cout << n - cnt;
+    return 0;
+}

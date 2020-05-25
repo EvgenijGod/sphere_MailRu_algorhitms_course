@@ -1,0 +1,57 @@
+//#include <math.h>
+#include <iostream>
+#include <algorithm>
+#include <queue>
+#include <vector>
+
+using namespace std;
+
+struct node {
+    node *ch[2];
+    int freq; // частотность
+    int sym;
+    node (int sym = -1, int freq = 0) {// если sym и freq не введены, то они равн€ютс€ -1 и 0 соотв.
+        ch[0] = ch[1] = nullptr;
+        this->freq = freq;
+        this->sym = sym;
+    };
+};
+
+node *build(vector<int> s, vector<int> f) { // символы, встречаемость
+    priority_queue<pair<int, node*>> pq;
+    for (size_t i = 0; i < s.size(); i++) {
+        pq.push({-f[i], new node(s[i], f[i])});
+    }
+    while (pq.size() > 1) {
+        auto e1 = pq.top(); pq.pop();
+        auto e2 = pq.top(); pq.pop();
+        node *p = new node(-1 ,-(e1.first + e2.first));// -ибо в приоритетной очереди без ф-ции сранвнени€ сверху - макс. эелемент
+        p->ch[0] = e1.second;
+        p->ch[1] = e2.second;
+        pq.push({-p->freq, p});
+    }
+    auto q = pq.top();
+    return q.second;
+}
+
+void walk(const node *n, vector<string> &v, string s) {// коды симвовлов в векторе, строки из нулей и единиц
+    if (n->ch[0]) {
+        return walk(n->ch[0], v, s + "0");
+    }
+    if (n->ch[1]) {
+        return walk(n->ch[0], v, s + "1");
+    }
+    if (n->sym >= 0) {
+        v[n->sym] = s;
+    }
+}
+int main() {
+    priority_queue<int, vector<int>, greater<int>> a;
+    a.push(123);
+    a.push(10);
+    auto t = a.top();
+    a.pop();
+
+    return 0;
+}
+

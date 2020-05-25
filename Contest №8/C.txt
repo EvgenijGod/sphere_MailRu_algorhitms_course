@@ -1,0 +1,65 @@
+#include <iostream>
+#include <algorithm>
+#include <math.h>
+#include <vector>
+#include <limits.h>
+#include <deque>
+using namespace std;
+
+vector<pair<double, double>> A;
+vector<pair<int, double>> B;
+vector<pair<double, pair<int, int>>> Q;
+int n;
+double my_r (pair<double, double> a, pair<double, double> b) {
+    return sqrt((a.first - b.first) * (a.first - b.first) + (a.second - b.second) * (a.second - b.second));
+}
+
+int get_root(int x, double p) {
+    if (B[x].first == x)  {
+        B[x].second = max(B[x].second, p);
+        return x;
+    }
+    int y = get_root(B[x].first, p);
+    B[x].second = max(B[y].second, p);
+    B[x].first = y;
+    return y;
+}
+
+void merge(int l, int r, double p) {
+    int e = (l + r) / 2;
+    l = get_root(l, p);
+    r = get_root(r, p);
+    if (e % 2 == 1) {
+        B[l].first = r;
+        B[l].second = max(B[r].second, B[l].second);
+    } else {
+        B[r].first = l;
+        B[r].second = max(B[r].second, B[l].second);
+    }
+}
+
+int main() {
+    cin >> n;
+    A.resize(n);
+    B.resize(n);
+    Q.resize((n * (n - 1)) / 2);
+    for (int i = 0; i < n; i++) {
+        double a, b;
+        cin >> a >> b;
+        A[i] = {a, b};
+        B[i] = {i, 0.0};
+    }
+    int iter = 0;
+    for (int i = 0; i < n; i++) {
+        for (int j = i + 1; j < n; j++) {
+            Q[iter++] = {my_r(A[i], A[j]), {i, j}};
+        }
+    }
+    sort(Q.begin(), Q.end());
+    for (int i = 0; i < iter; i++) {
+        if (get_root(B[Q[i].second.first].first, 0.0) != get_root(B[Q[i].second.second].first, 0.0))
+            merge(Q[i].second.first, Q[i].second.second, Q[i].first);
+    }
+    printf("%.4lf", B[get_root(1, 0.0)].second);
+    return 0;
+}

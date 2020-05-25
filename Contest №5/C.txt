@@ -1,0 +1,69 @@
+#include <iostream>
+#include <algorithm>
+#include <math.h>
+#include <vector>
+#include <set>
+using namespace std;
+
+int n;
+int xx = 100000, yy = 100000;
+double ans = 0.0;
+vector<pair<int, int>> A;
+vector<pair<int, int>> way;
+
+bool cmp (pair<int, int> a, pair<int, int> b) {
+    if (a.first == xx && a.second == yy) {
+        return a != b;
+    }
+    return (a.first - xx) * (b.second - yy) > (a.second - yy) * (b.first - xx);
+}
+
+double len(pair<int, int> a, pair<int, int> b) {
+    double l1 = a.first - b.first, l2 = a.second - b.second;
+    double tmp = sqrt(l1 * l1 + l2 * l2);
+    return tmp;
+}
+int main() {
+    scanf("%d", &n);
+    A.resize(n);
+    for (int i = 0; i < n; i++) {
+        int x, y;
+        scanf("%d %d", &x, &y);
+        if (x < xx) {
+            xx = x;
+            yy = y;
+        } else {
+            if (x == xx && y < yy) {
+                xx = x;
+                yy = y;
+            }
+        }
+        A[i] = {x, y};
+    }
+    sort(A.begin(), A.end(), cmp);
+    int iter = 1, j = 0;
+    way.push_back(A[0]);
+    //way.push_back(A[1]);
+    while(iter < n) {
+        pair<int, int> a = way[j], b = A[iter], c = A[(iter + 1) % n];
+        if ((b.first - a.first) * (c.second - b.second) > (b.second - a.second) * (c.first - b.first)) {
+            j++;
+            way.push_back(b);
+            iter++;
+        } else {
+            a = way[j - 1]; b = way[j];
+            iter++;
+            while (j > 0 && (b.first - a.first) * (c.second - b.second) <= (b.second - a.second) * (c.first - b.first)) {
+                way.pop_back();
+                j--;
+                a = way[j - 1]; b = way[j];
+            }
+        }
+    }
+    for (int i = 1; i < way.size(); i++) {
+        ans += len(way[i], way[i - 1]);
+    }
+    ans += len(way[way.size() - 1], way[0]);
+    printf("%.2f", ans);
+    return 0;
+}

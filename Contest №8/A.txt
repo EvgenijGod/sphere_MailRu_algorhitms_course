@@ -1,0 +1,83 @@
+#include <iostream>
+#include <algorithm>
+#include <set>
+#include <vector>
+#include <limits.h>
+#include <deque>
+using namespace std;
+
+deque<pair<int, int>> Q;
+vector<vector<int>> A;
+int main() {
+    int n, m, k, l;
+    cin >> n >> m >> k >> l;
+    A.resize(m + 1);
+    for (int i = 0; i <= m; i++) {
+        A[i].resize(k + 1);
+    }
+    Q.push_back({0,0});
+    while (Q.empty() == false) {
+        pair<int, int> tmp = Q[0];
+        Q.pop_front();
+        int nn = n - tmp.first - tmp.second, mm = tmp.first, kk = tmp.second;
+        if (nn + mm <= n && !A[0][kk]) { //m --> n
+            Q.push_back({0, kk});
+            A[0][kk] = A[mm][kk] + 1;
+        }
+        //////////////
+        if (nn + mm <= m && !A[nn + mm][kk]) { //n --> m
+            Q.push_back({nn + mm , kk});
+            A[nn + mm][kk] = A[mm][kk] + 1;
+        }
+        if (nn + mm > m && !A[m][kk]) { //n --> m
+            Q.push_back({m , kk});
+            A[m][kk] = A[mm][kk] + 1;
+        }
+        //////////////
+        if (nn + kk <= k && !A[mm][nn + kk]) { //n --> k
+            Q.push_back({mm , nn + kk});
+            A[mm][nn + kk] = A[mm][kk] + 1;
+        }
+        if (nn + kk > k && !A[mm][k]) { //n --> k
+            Q.push_back({mm , k});
+            A[mm][k] = A[mm][kk] + 1;
+        }
+        //////////////
+        if (nn + kk <= n && !A[mm][0]) { //k --> n
+            Q.push_back({mm , 0});
+            A[mm][0] = A[mm][kk] + 1;
+        }
+        //////////////
+        if (mm + kk <= k && !A[0][mm + kk]) { //m --> k
+            Q.push_back({0 , mm + kk});
+            A[0][mm + kk] = A[mm][kk] + 1;
+        }
+        if (mm + kk > k && !A[mm + kk - k][k]) { //m --> k
+            Q.push_back({mm + kk - k , k});
+            A[mm + kk - k][k] = A[mm][kk] + 1;
+        }
+        //////////////
+        if (mm + kk <= m && !A[mm + kk][0]) { //k --> m
+            Q.push_back({mm + kk, 0});
+            A[mm + kk][0] = A[mm][kk] + 1;
+        }
+        if (mm + kk > m && !A[m][mm + kk - m]) { //k --> m
+            Q.push_back({m , mm + kk - m});
+            A[m][mm + kk - m] = A[mm][kk] + 1;
+        }
+    }
+    int ans = INT_MAX;
+    for (int i = 0; i <= m; i++) {
+        for (int j = 0; j <= k; j++) {
+            if (i + j + l == n && A[i][j]) {
+                ans = min(ans, A[i][j]);
+            }
+        }
+    }
+    if (ans == INT_MAX) {
+        cout << "OOPS";
+    } else {
+        cout << ans - 1;
+    }
+    return 0;
+}

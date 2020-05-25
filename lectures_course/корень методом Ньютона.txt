@@ -1,0 +1,8 @@
+long long sqrt1 (long long N) {
+    long long an = (1 + N / 1) / 2, ann = (an + N / an) / 2;
+    while (ann - an > 1 || ann - an < -1) {
+        an = ann;
+        ann = (an + N / an) / 2;
+    }
+    return min(ann, an);
+}

@@ -1,0 +1,73 @@
+#include <iostream>
+#include <algorithm>
+#include <set>
+#include <vector>
+#include <limits.h>
+#include <deque>
+using namespace std;
+
+multiset<pair<int, int>> A;
+vector<pair<int, int>> R;
+vector<int> B;
+vector<int> ans;
+int v, e, m;
+int amnt = 0;
+int get_root(int x) {
+    if (B[x] == x)  {
+        return x;
+    }
+    return B[x] = get_root(B[x]);
+}
+
+void merge(int l, int r) {
+    l = get_root(l);
+    r = get_root(r);
+    if (amnt % 2 == 1) {
+        B[l] = r;
+    } else {
+        B[r] = l;
+    }
+}
+
+int main() {
+    scanf("%d %d %d", &v, &e, &m);
+    for (int i = 0; i < e; i++) {
+        int a, b;
+        scanf("%d %d", &a, &b);
+        A.insert({a, b});
+        A.insert({b, a});
+    }
+    R.resize(m);
+    for (int i = 0; i < m; i++) {
+        int a, b;
+        scanf("%d %d", &a, &b);
+        R[i] = {a, b};
+        A.erase({a, b});
+        A.erase({b, a});
+    }
+    B.resize(v);
+    for (int i = 0; i < v; i++) {
+        B[i] = i;
+    }
+    amnt = v;
+    for (auto i : A) {
+        if (get_root(i.first) != get_root(i.second)) {
+            merge(i.second, i.first);
+            amnt--;
+        }
+    }
+    ans.resize(m + 1);
+    for (int i = m - 1; i >= 0; i--) {
+        ans[i + 1] = amnt;
+        int a = R[i].first, b = R[i].second;
+        if (get_root(a) != get_root(b)) {
+            merge(a, b);
+            amnt--;
+        }
+
+    }
+    ans[0] = amnt;
+    for (int i = 0; i <= m; i++)
+        printf("%d\n", ans[i]);
+    return 0;
+}

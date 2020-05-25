@@ -1,0 +1,53 @@
+#include <math.h>
+#include <iostream>
+#include <algorithm>
+#include <vector>
+
+#define ll long long
+using namespace std;
+
+vector <int> A;
+ll res = 0;
+
+int main() {
+    ll n;
+    cin >> n;
+    A.resize(n);
+    for (ll i = 0; i < n; i++)
+        cin >> A[i];
+    ll i = 0, iter = 0, res = 0;
+    for (ll r = 0; r < n; r++) {
+        ll tmp;
+        cin >> tmp;
+        while (i < n && A[i] <= tmp) {
+            if (iter % 2 == 0) {
+                res = res + A[i];
+                if (llabs(res) > 1000000000)
+                    res %= 1000000000;
+            }
+            i++;
+            iter++;
+        }
+        if (iter % 2 == 0) {
+            res = res + tmp;
+            if (llabs(res) > 1000000000)
+                res %= 1000000000;
+        }
+        iter++;
+    }
+    while (i < n) {
+        if (iter % 2 == 0) {
+            res = res + A[i];
+            if (llabs(res) > 1000000000)
+                res %= 1000000000;
+        }
+        i++;
+        iter++;
+    }
+    res %= 1000000000;
+    if (res < 0)
+        res = -res;
+    cout << res;
+    return 0;
+}
+

@@ -1,0 +1,47 @@
+#include <iostream>
+#include <algorithm>
+#include <math.h>
+#include <vector>
+using namespace std;
+// 3458557755
+
+int main() {
+    string s;
+    unsigned long long sum = 0;
+    cin >> s;
+    unsigned long long n = s.size();
+    for (int i = 1; i < n; i++) {
+        sum += 1ull << i;
+    }
+    bool check = true;
+    for (int i = 0; i < n; i++) {
+        if (s[i] < '3') {
+            break;
+        }
+        if (s[i] > '7') {
+            sum += 1ull << (n - i);
+            break;
+        }
+        if (s[i] == '3') {
+            continue;
+        }
+        if (s[i] == '7') {
+            sum += 1ull << (n - i - 1);
+            continue;
+        }
+        if (s[i] > '3') {
+            sum += 1ull << (n - i - 1);
+            break;
+        }
+    }
+    for (int i = 0; i < n && check; i++) {
+        if (!(s[i] == '3' || s[i] == '7')){
+            check = false;
+            break;
+        }
+    }
+    sum += check;
+    cout << sum;
+    //reverse(n.begin(), n.end());
+    return 0;
+}

@@ -1,0 +1,101 @@
+#include <iostream>
+#include <algorithm>
+#include <queue>
+#include <vector>
+#include <math.h>
+
+using namespace std;
+
+struct bhnode {
+    long long priority;
+    bhnode() {
+        priority = 0;
+    }
+};
+
+struct binary_heap{
+    bhnode *body;
+    long long bodysize;
+    long long numnodes;
+    binary_heap (long long maxsize) {
+        body = new bhnode[maxsize + 1];
+        bodysize = maxsize;
+        numnodes = 0;
+    }
+    ~binary_heap() {
+        delete body;
+    }
+    void heap_swap(long long a, long long b) {
+        bhnode tmp = body[a];
+        body[a] = body[b];
+        body[b] = tmp;
+    }
+    bhnode *fetchMin() {
+        return numnodes == 0? NULL : body + 1;
+    }
+    long long insert (bhnode node) {
+        if (numnodes > bodysize)
+            return -1;
+        body[++numnodes] = node;
+        long long i = numnodes;
+        bhnode j = body[i];
+        for (; i > 1; i /= 2) {
+            if (j.priority < body[i / 2].priority) {
+                body[i] = body[i / 2];
+            } else break;
+        }
+        body[i] = j;
+        return 1;
+    }
+    bhnode extractMin () {
+        bhnode ans = body[1];
+        heap_swap(1, numnodes);
+        numnodes--;
+        heapify(1);
+        return ans;
+    }
+    void heapify (long long index) {
+        for (;;) {
+            long long left = index + index;
+            long long right = left + 1;
+            long long least = index;
+            if (left <= numnodes && body[left].priority < body[index].priority)
+                least = left;
+            if (right <= numnodes && body[right].priority < body[least].priority)
+                least = right;
+            if (least == index)
+                break;
+            heap_swap(index, least);
+            index = least;
+        }
+    }
+};
+int main() {
+    long long n;
+    cin >> n;
+    binary_heap *my = new binary_heap(n);
+    for (long long i = 0; i < n; i++) {
+        long long tmp;
+        scanf("%llu", &tmp);
+        bhnode tmp1;
+        tmp1.priority = tmp;
+        my->insert(tmp1);
+    }
+    double res = 0.0;
+    for (long long i = 0; i < n - 1; i++) {
+        bhnode tmp1 = my->extractMin(), tmp2 = my->extractMin();
+        /*for (long long i = 0; i < my->numnodes; i++)
+            cout << my->body[i + 1].priority << " ";
+        cout << "------ ";
+        for (long long i = 0; i < my->numnodes; i++)
+            cout << my->body[i + 1].priority << " ";
+        cout << "------ ";
+        cout << tmp1.priority << " " << tmp2.priority << endl;*/
+        tmp1.priority += tmp2.priority;
+        res += tmp1.priority;
+        my->insert(tmp1);
+    }
+    res *= 0.01;
+    printf("%.2f", res);
+    return 0;
+}

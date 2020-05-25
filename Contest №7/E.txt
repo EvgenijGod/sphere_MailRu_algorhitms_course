@@ -1,0 +1,84 @@
+#include <iostream>
+#include <algorithm>
+#include <set>
+#include <vector>
+#include <limits.h>
+#include <tuple>
+using namespace std;
+
+vector<vector<long long>> A;
+vector<vector<long long>> D;
+vector<vector<bool>> U;
+set <tuple<long long, int, int>> Q;
+int main() {
+    int n, m;
+    scanf("%d %d", &n, &m);
+    A.resize(n);
+    D.resize(n);
+    U.resize(n);
+    for (int i = 0; i < n; i++) {
+        U[i].resize(m);
+        A[i].resize(m);
+        D[i].resize(m);
+        for (int j = 0; j < m; j++) {
+            scanf("%lld", &A[i][j]);
+            D[i][j] = 1e10;
+            if (!(i == 0 && j == 0))
+                Q.insert({1e10, i,j});
+            else
+                Q.insert({0,i,j});
+        }
+    }
+    U[0][0] = true;
+    D[0][0] = 0;
+    while (Q.empty() == false) {
+        long long d_u;
+        int i, j;
+        auto iter = Q.begin();
+        tie(d_u, i, j) = *iter;
+        Q.erase(iter);
+        U[i][j] = true;
+        if (i - 1 >= 0 && U[i - 1][j] == 0) {
+            long long d_v = D[i - 1][j];
+            long long u = A[i][j], v = A[i - 1][j];
+            long long w = u > v ? 0 : v - u;
+            if (d_v > d_u + w) {
+                Q.erase({D[i - 1][j], i - 1, j});
+                D[i - 1][j] = d_u + w;
+                Q.insert({D[i - 1][j], i - 1, j});
+            }
+        }
+        if (i + 1 < n && U[i + 1][j] == 0) {
+            long long d_v = D[i + 1][j];
+            long long u = A[i][j], v = A[i + 1][j];
+            long long w = u > v ? 0 : v - u;
+            if (d_v > d_u + w) {
+                Q.erase({D[i + 1][j], i + 1, j});
+                D[i + 1][j] = d_u + w;
+                Q.insert({D[i + 1][j], i + 1, j});
+            }
+        }
+        if (j - 1 >= 0 && U[i][j - 1] == 0) {
+            long long d_v = D[i][j - 1];
+            long long u = A[i][j], v = A[i][j - 1];
+            long long w = u > v ? 0 : v - u;
+            if (d_v > d_u + w) {
+                Q.erase({D[1][j - 1], i, j - 1});
+                D[i][j - 1] = d_u + w;
+                Q.insert({D[i][j - 1], i, j - 1});
+            }
+        }
+        if (j + 1 < m && U[i][j + 1] == 0) {
+            long long d_v = D[i][j + 1];
+            long long u = A[i][j], v = A[i][j + 1];
+            long long w = u > v ? 0 : v - u;
+            if (d_v > d_u + w) {
+                Q.erase({D[1][j + 1], i, j + 1});
+                D[i][j + 1] = d_u + w;
+                Q.insert({D[i][j + 1], i, j + 1});
+            }
+        }
+    }
+    cout << D[n - 1][m - 1];
+    return 0;
+}

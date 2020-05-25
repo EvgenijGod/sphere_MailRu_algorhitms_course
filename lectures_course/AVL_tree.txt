@@ -1,0 +1,145 @@
+#include <string>
+#include <stdio.h>
+#include <cstdlib>
+#include <time.h>
+#include <set>
+#include <iostream>
+using namespace std;
+
+struct AVLNode {
+    AVLNode *left, *right;
+    string key;
+    int height;
+    AVLNode *rotateRight() {
+        AVLNode *tmp = this->left;
+        left = tmp->right;
+        tmp->right = this;
+        fix();
+        tmp->fix();
+        return tmp;
+    }
+    AVLNode *rotateLeft() {
+        AVLNode *tmp = this->right;
+        right = tmp->left;
+        tmp->left = this;
+        fix();
+        tmp->fix();
+        return tmp;
+    }
+    AVLNode *balance() {
+        fix();
+        switch (getBalanceFactor()) {
+            case -2: {
+                if (left->getBalanceFactor() == 1)
+                    left = left->rotateLeft();
+                return rotateRight();
+            }
+            case 2: {
+                if (right->getBalanceFactor() == -1)
+                    right = right->rotateRight();
+                return rotateLeft();
+            }
+            default:
+                return this;
+        }
+    }
+    AVLNode(string const &_key) : key(_key) {
+        left = right = nullptr;
+        height = 1;
+    }
+    int getBalanceFactor() const {
+        int r = right == nullptr ? 0 : right->height;
+        int l = left == nullptr ? 0 : left->height;
+        return r - l;
+    }
+    void fix() {
+        int r = right == nullptr ? 0 : right->height;
+        int l = left == nullptr ? 0 : left->height;
+        height = (r > l ? r : l) + 1;
+    }
+    AVLNode *insert(string const &_key) {
+        if (_key < key)
+            left = left == nullptr ? new AVLNode(_key) : left->insert(_key);
+        else
+            right = right == nullptr ? new AVLNode(_key) : right->insert(_key);
+        return balance();
+    }
+    AVLNode *findMinimum() {
+        return left != nullptr ? left->findMinimum() : this;
+    }
+
+    AVLNode *removeMinimum() {
+        if (left == nullptr) return right;
+        left = left->removeMinimum();
+        return balance();
+    }
+
+    static AVLNode *remove(AVLNode *p, string const &_key) {
+        if (p == nullptr) return nullptr;
+        if (_key < p->key) {
+            p->left = remove(p->left, _key);
+            return p->balance();
+        } else if (_key > p->key) {
+            p->right = remove(p->right, _key);
+            return p->balance();
+        } else {
+            AVLNode *l = p->left;
+            AVLNode *r = p->right;
+            delete p;
+            if (r == nullptr) return l;
+            AVLNode *min = r->findMinimum();
+            min->right = r->removeMinimum();
+            min->left = l;
+            return min->balance();
+        }
+    }
+    void print(int n) {
+        if (right != nullptr) {
+            right->print(n + 4);
+        }
+        for (int i = 0; i < n; i++) {
+            cout << " ";
+        }
+        cout << n/4 << "--"<< key << endl;
+        if (left != nullptr) {
+            left->print(n + 4);
+            cout << " ";
+        }
+        //cout << key << endl;
+    }
+};
+
+struct AVLTree {
+    AVLNode *root;
+    AVLTree() {
+        root = nullptr;
+    }
+    void print() const {
+        if (root != nullptr) root->print(0);
+    }
+    bool insert(string const &_key) {
+        if (root == nullptr) root = new AVLNode(_key);
+        else root = root->insert(_key);
+        return true;
+    }
+
+    bool remove(string const &_key) {
+        root = AVLNode::remove(root, _key);
+        return true;
+    }
+};
+
+int main() {
+    AVLTree t;
+    t.insert("abra");
+    t.insert("aara");
+    t.insert("cadabraaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+    t.insert("fooo");
+    t.insert("dfoooooooooooo");
+    t.insert("barrrrrrrrrrrr");
+    t.insert("qwer");
+    t.print();
+    cout << endl;
+    t.remove("cadabraaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+    t.print();
+}

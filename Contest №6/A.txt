@@ -1,0 +1,44 @@
+#include <iostream>
+#include <algorithm>
+#include <tuple>
+#include <unordered_map>
+#include <string>
+#include <vector>
+#define P  1001u//5u//
+#define REVP  3054961753u//3435973837u//
+using namespace std;
+
+int main() {
+    unordered_map<unsigned, int> A;
+    string s = "012345678";
+    cin >> s;
+    int n = s.size();
+    int ans = 0;
+    vector<unsigned> htab (n + 1, 0);
+    vector<pair<unsigned, unsigned>> ptab (n + 1, {0,0});
+    ptab[0] = {1, 1};
+    for (int i = 1; i < n + 1; i++) {
+        ptab[i].first = ptab[i - 1].first * P;
+        ptab[i].second = ptab[i - 1].second * REVP;
+        htab[i] = htab[i - 1] + (s[i - 1] - 'a' + 1) * ptab[i - 1].first;
+    }
+    A.reserve(n);
+    for (int i = 1; i <= n; i++) {
+        int cnt = 0;
+        A.clear();
+        for (int j = 0; j + i <= n; j++) {
+            unsigned left = j, right = j + i, check = 0;
+            unsigned tmp = (htab[right] - htab[left]) * ptab[left].second;
+            auto iter = A.find(tmp);
+            if (iter == A.end()) {
+                A.insert({tmp, 1});
+            } else {
+                cnt = max(cnt, ++(*iter).second);
+            }
+        }
+        if (cnt == 0) cnt++;
+        ans = max(ans, cnt * i);
+    }
+    cout << ans;
+    return 0;
+}

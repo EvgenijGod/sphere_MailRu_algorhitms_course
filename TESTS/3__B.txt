@@ -1,0 +1,64 @@
+#include <iostream>
+#include <algorithm>
+#include <set>
+#include <vector>
+#include <limits.h>
+#include <deque>
+using namespace std;
+
+int n, m;
+vector<vector<int>> A;
+vector<bool> visited;
+
+deque<int> Q;
+void dfs(int i) {
+    visited[i] = true;
+    Q.push_back(i);
+    while (Q.empty() == false) {
+        visited[i] = true;
+        i = Q[0];
+        Q.pop_front();
+        int sz = A[i].size();
+        for (int j = 0; j < sz; j++) {
+            if (visited[A[i][j]] == false) {
+                Q.push_back(A[i][j]);
+            }
+        }
+    }
+}
+bool check() {
+    int cnt = 0;
+    for (int i = 0; i < n; i++) {
+        if (A[i].size() % 2 == 1) {
+            cnt++;
+        }
+    }
+    if (cnt > 2)
+        return false;
+    dfs(0);
+    for (int i = 0; i < n; i++) {
+        if (A[i].size() % 2 == 1 || visited[i] == false)
+            return false;
+    }
+    return true;
+}
+int main() {
+    scanf("%d %d", &n, &m);
+    A.resize(n);
+    visited.resize(n, false);
+    for (int i = 0; i < m; i++) {
+        int x, y;
+        scanf("%d %d", &x, &y);
+        x--;
+        y--;
+        A[x].push_back(y);
+        A[y].push_back(x);
+    }
+    bool res = check();
+    if (res == true) {
+        cout << "YES";
+    } else {
+        cout << "NO";
+    }
+    return 0;
+}

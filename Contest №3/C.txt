@@ -1,0 +1,60 @@
+#include <stdlib.h>
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <climits>
+
+using namespace std;
+
+/*struct my {
+    char name;
+    int point[10] = {};
+};*/
+class my {
+public: string name;
+    int point[10] = {};
+
+};
+
+vector <my> A;
+int n, k;
+
+bool cmp(my a, my b) {
+    for (int i = 0; i < k; i++) {
+        if (a.point[i] > b.point[i]) {
+            return true;
+        }
+        if (a.point[i] < b.point[i]) {
+            return false;
+        }
+    }
+    return false;
+}
+
+int main() {
+    cin >> n >> k;
+    int priority[10] = {};
+    for (int i = 0; i < k; i++) {
+        cin >> priority[i];
+        priority[i]--;
+    }
+    vector<int> arr;
+    arr.resize(k);
+    A.resize(n);
+    for (int i = 0; i < n; i++) {
+        cin >> A[i].name;
+        int c;
+        for (int j = 0; j < k; j++) {
+            cin >> arr[j];
+        }
+        for (int j = 0; j < k; j++) {
+            A[i].point[j] = arr[priority[j]];
+        }
+    }
+    sort(A.begin(), A.end(), cmp);
+    for (int i = 0; i < n; i++) {
+        cout << A[i].name << endl;
+    }
+    return 0;
+}
+

@@ -1,0 +1,32 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <cmath>
+#include <stack>
+using namespace std;
+
+long long fact(long long a) {
+    if (a == 1 || a == 0)
+        return 1;
+    return a * fact(a - 1);
+}
+
+int main() {
+    long long n, num;
+    cin >> n >> num;
+    num--;
+    vector<int> A;
+    A.resize(n);
+    for (int i = 0; i < n; i++)
+        A[i] = i + 1;
+   // return 0;
+    for (int i = n; i > 0; i--) {
+        long long a = num / fact(i - 1);
+        cout << A[a] << " ";
+        //return 0;
+        A.erase(A.begin() + a);
+        //return 0;
+        num = num - a * fact(i - 1);
+    }
+    return 0;
+}

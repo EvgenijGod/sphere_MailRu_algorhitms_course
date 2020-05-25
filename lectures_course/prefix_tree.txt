@@ -1,0 +1,54 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+using namespace std;
+
+struct tree{
+    tree *ch[3];
+    bool is_t;
+    tree(){
+        ch[0] = ch[1] = ch[2] = nullptr;
+        is_t = false;
+    };
+};
+
+pair <tree*, bool> add(string w, tree *t) {
+    if (t == nullptr)
+        t = new tree();
+    tree *p = t;
+    for (auto c:w) {
+        if (t->ch[c-'a'] == nullptr) {
+            t->ch[c-'a'] = new tree();
+        }
+        p = t->ch[c-'a'];
+        if (p->is_t)
+            return {t, false};
+    }
+    p->is_t = true;
+    return {t, true};
+}
+
+bool check(tree const *t, string s) {
+    if (t == nullptr)
+        return false;
+    auto p = t;
+    for(auto c:s) {
+        p = p->ch[c-'a'];
+        if (p == nullptr)
+            return false;
+        if (p->is_t)
+            p = t;
+    }
+    return p == t;
+}
+int main() {
+
+    tree *root = nullptr;
+    for (auto w: words) {
+        auto t = add(w, root);
+        if (t.second)
+            root = t.first;
+    }
+    cout << "HELLO1";
+    return 0;
+}

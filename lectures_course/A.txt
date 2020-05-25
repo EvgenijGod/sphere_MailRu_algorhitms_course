@@ -1,0 +1,27 @@
+#include <iostream>
+#include <algorithm>
+using namespace std;
+
+int main() {
+    int cnt = 0, a = 0, n;
+    cin >> n;
+    for (int i = 0; i < n; i++) {
+        int tmp;
+        cin >> tmp;
+        tmp -= 5;
+        if (tmp == 0){
+            a++;
+        } else {
+            int e = tmp / 5;
+            if (a >= e) {
+                a -= e;
+            } else {
+                e -= a;
+                a = 0;
+                cnt += e;
+            }
+        }
+    }
+    cout << cnt;
+    return 0;
+}

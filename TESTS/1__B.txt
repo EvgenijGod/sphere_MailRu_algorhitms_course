@@ -1,0 +1,68 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <cmath>
+#include <stack>
+using namespace std;
+
+vector<char> A;
+int main() {
+    char c;
+    //string s = "";
+    bool ans = true;
+    while (scanf("%c", &c) != EOF) { ////////////////////////
+        if (c == '\n') {
+
+            if (A.empty() == false)
+                ans = false;
+            if (ans == true){
+                cout << "Yes" << endl;
+            } else {
+                cout << "No" << endl;
+            }
+            ans = true;
+            A.clear();
+        } else {
+                switch (c) {
+                    case '(': {A.push_back(c); break;}
+                    case '{': {A.push_back(c); break;}
+                    case '<': {A.push_back(c); break;}
+                    case '[': {A.push_back(c); break;}
+
+                    case ')': {
+                        if (A.empty()) ans = false; else
+                        if (A[A.size() - 1] == '(') {
+                            A.pop_back();
+                        } else {
+                            ans = false;
+                        }
+                        break;}
+                    case ']': {
+                        if (A.empty()) ans = false; else
+                        if (A[A.size() - 1] == '[') {
+                            A.pop_back();
+                        } else {
+                            ans = false;
+                        }
+                        break;}
+                    case '>': {
+                        if (A.empty()) ans = false; else
+                        if (A[A.size() - 1] == '<') {
+                            A.pop_back();
+                        } else {
+                            ans = false;
+                        }
+                        break;}
+                    case '}': {
+                        if (A.empty()) ans = false; else
+                        if (A[A.size() - 1] == '{') {
+                            A.pop_back();
+                        } else {
+                            ans = false;
+                        }
+                        break;}
+                }
+            }
+    }
+    return 0;
+}

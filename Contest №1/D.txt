@@ -1,0 +1,136 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#define big 999999999
+
+using namespace std;
+string s1, s2;
+long long A[100005] = {};
+
+void sum() {
+    if (s1.length() < s2.length())
+        swap(s1, s2); // l1 >= l2
+    long long l1 = s1.length(), l2 = s2.length();
+    reverse(s1.begin(), s1.end());
+    reverse(s2.begin(), s2.end());
+    for (long long i = 0; i < l2; i++) {
+        long long tmp2 = s2[i] - '0', tmp1 = s1[i] - '0';
+        A[i] = tmp1 + tmp2;
+    }
+    for (long long i = l2; i < l1; i++) {
+        long long tmp1 = s1[i] - '0';
+        A[i] = tmp1;
+    }
+    long long i = 0;
+    while(A[i] != big) {
+        if (A[i] > 9) {
+            if (A[i + 1] == big) {
+                A[i + 1] = A[i] / 10;
+            } else {
+                A[i + 1] += A[i] / 10;
+            }
+            A[i] %= 10;
+        }
+        i++;
+    }
+}
+
+long long sub() {
+    long long sw = 1;
+    if (s1.length() < s2.length()) {
+        sw *= -1;
+        swap(s1, s2); // l1 >= l2
+    }
+    long long l1 = s1.length(), l2 = s2.length();
+    bool e = false;
+    if (l1 == l2) {
+        for (long long i = 0; i < l1; i++) {
+            if (s1[i] < s2[i]) {
+                e = true;
+                break;
+            }
+            if (s1[i] > s2[i]) {
+                e = false;
+                break;
+            }
+        }
+    }
+    if (e == true) {
+        swap(s1, s2);
+        sw *= -1;
+    }
+    reverse(s1.begin(), s1.end());
+    reverse(s2.begin(), s2.end());
+    for (long long i = 0; i < l1; i++) {
+        long long tmp = s1[i] - '0';
+        A[i] = tmp;
+    }
+    for (long long i = 0; i < l2; i++) {
+        long long tmp2 = s2[i] - '0';
+        A[i] -= tmp2;
+        if (A[i] < 0) {
+            A[i] = 10 + A[i];
+            A[i+1]--;
+        }
+    }
+    for (long long i = l2; i < l1; i++) {
+        if (A[i] < 0) {
+            A[i] = 10 + A[i];
+            A[i+1]--;
+        }
+    }
+    return sw;
+}
+int main()
+{
+    char c;
+    cin >> s1 >> c >> s2;
+    long long zn1 = -1, zn2 = -1, zn3 = -1;
+    if (isdigit(s1[0])) {
+        zn1 = 1;
+    } else {
+        s1.erase(s1.begin() + 0);
+    }
+    if (c == '+') {
+        zn3 = 1;
+    }
+    if (isdigit(s2[0])) {
+        zn2 = 1;
+    } else {
+        s2.erase(s2.begin() + 0);
+    }
+    for (long long i = 0; i < 100005; i++)
+        A[i] = big;
+    long long sw = 1;
+    if (zn1 == 1) {
+        zn2 *= zn3;
+        if (zn2 == 1) {
+            sum();
+        } else {
+            sw = sub();
+        }
+    } else {
+        zn2 *= zn3;
+        if (zn2 == -1) {
+            sum();
+        } else {
+            sw = sub();
+        }
+        sw *= -1;
+    }
+    long long i = 100004;
+    while(i >= 0 && (A[i] == big || A[i] == 0))
+        i--;
+    if (i < 0) {
+        cout << "0";
+        return 0;
+    }
+    if (sw == -1)
+        cout << "-";
+    while(i >= 0) {
+        cout << A[i];
+        i--;
+    }
+    //cout << endl;
+    return 0;
+}

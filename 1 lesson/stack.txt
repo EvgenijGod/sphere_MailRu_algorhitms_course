@@ -1,0 +1,51 @@
+#include <iostream>
+#include <algorithm>
+using namespace std;
+
+class stack {
+    // сюда пользователь не попадет
+    int *mass;
+    int N, k = 0;
+public:
+    stack(int size) {
+        N = size;
+        mass = new int[N];
+    }
+    ~stack(){ // деструктор
+        delete []mass;
+    }
+    bool push(int elem) {
+        if (k >= N)
+            return false;
+        mass[k++] = elem;
+        return true;
+    }
+    int pop() {
+        if (k <= 0) throw "stack underflow";
+        return mass[--k];
+    }
+    int peek() {
+        if (k <= 0) throw "stack underflow";
+        return mass[k - 1];
+    }
+    bool empty() {
+        return k <= 0;
+    }
+};
+
+int main() {
+    stack s(100);
+    try {
+        for (int  i = 0; i < 105; i++) {
+            s.push(i * i);
+        }
+        int t = 0;
+        for (int  i = 0; i < 105; i++) {
+            t += s.pop();
+        }
+    } catch (const char *err) {
+        cout << "caught " << err;
+    }
+
+    return 0;
+}
